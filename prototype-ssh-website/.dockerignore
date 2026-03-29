@@ -1,0 +1,5 @@
+.git
+.ssh
+main
+Dockerfile
+.dockerignore
