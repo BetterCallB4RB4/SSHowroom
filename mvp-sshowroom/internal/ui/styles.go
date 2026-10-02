@@ -34,51 +34,100 @@ type styles struct {
 	normal   lipgloss.Style
 	info     lipgloss.Style
 
-	// Sidebar-specific styles.
-	sidebarBox   lipgloss.Style
-	sidebarTitle lipgloss.Style
+	// Shared panel styles keep the dashboard visually consistent.
+	panel           lipgloss.Style
+	panelTitle      lipgloss.Style
+	card            lipgloss.Style
+	selectedCard    lipgloss.Style
+	cardTitle       lipgloss.Style
+	cardUnderline   lipgloss.Style
+	cardDescription lipgloss.Style
+	cardLink        lipgloss.Style
 
 	// Main-panel-specific styles.
-	mainBox     lipgloss.Style
-	mainTitle   lipgloss.Style
 	tabActive   lipgloss.Style
 	tabInactive lipgloss.Style
+
+	// Animated face panel styles.
+	faceWhite  lipgloss.Style
+	faceIris   lipgloss.Style
+	facePupil  lipgloss.Style
+	faceLid    lipgloss.Style
+	faceMouth  lipgloss.Style
+	faceAccent lipgloss.Color
+	faceHappy  lipgloss.Color
+
+	// Ghosttime animation styles.
+	ghostOutline lipgloss.Style
+	ghostBody    lipgloss.Style
+	ghostColors  []lipgloss.Color
 }
 
 func makeStyles(r *lipgloss.Renderer) styles {
 	const (
-		accent   = lipgloss.Color("#7D56F4")
-		success  = lipgloss.Color("#04B575")
-		muted    = lipgloss.Color("#626262")
-		fg       = lipgloss.Color("#FAFAFA")
-		border   = lipgloss.Color("#444444")
-		borderOn = lipgloss.Color("#7D56F4")
+		accent    = lipgloss.Color("#7D56F4")
+		selection = lipgloss.Color("#FFD75F")
+		black     = lipgloss.Color("#000000")
+		white     = lipgloss.Color("#FFFFFF")
+		muted     = lipgloss.Color("#626262")
+		fg        = lipgloss.Color("#FAFAFA")
+		faceBlue  = lipgloss.Color("#67D9E8")
+		faceGold  = lipgloss.Color("#FFD75F")
 	)
 
 	return styles{
-		selected: r.NewStyle().Bold(true).Foreground(success),
-		normal:   r.NewStyle().Foreground(fg),
-		info:     r.NewStyle().Foreground(muted),
+		selected: r.NewStyle().
+			Bold(true).
+			Foreground(black).
+			Background(selection).
+			Padding(0, 2),
+		normal: r.NewStyle().Foreground(fg),
+		info:   r.NewStyle().Foreground(muted),
 
-		sidebarBox: r.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(border).
+		panel: r.NewStyle().
+			Border(lipgloss.ThickBorder()).
+			BorderForeground(white).
 			Padding(0, 1),
-		sidebarTitle: r.NewStyle().Bold(true).Foreground(accent),
-
-		mainBox: r.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(borderOn).
+		panelTitle: r.NewStyle().Bold(true).Foreground(accent),
+		card: r.NewStyle().
+			Border(lipgloss.ThickBorder()).
+			BorderForeground(muted).
 			Padding(0, 1),
-		mainTitle: r.NewStyle().Bold(true).Foreground(accent).MarginBottom(1),
+		selectedCard: r.NewStyle().
+			Border(lipgloss.ThickBorder()).
+			BorderForeground(selection).
+			Padding(0, 1),
+		cardTitle:       r.NewStyle().Bold(true).Foreground(fg),
+		cardUnderline:   r.NewStyle().Bold(true),
+		cardDescription: r.NewStyle().Foreground(fg),
+		cardLink:        r.NewStyle().Foreground(selection).Underline(true),
 
 		tabActive: r.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("#FAFAFA")).
-			Background(accent).
-			Padding(0, 1),
+			Foreground(black).
+			Background(selection),
 		tabInactive: r.NewStyle().
-			Foreground(muted).
-			Padding(0, 1),
+			Foreground(muted),
+
+		faceWhite:  r.NewStyle().Background(lipgloss.Color("#DDFBFF")),
+		faceIris:   r.NewStyle().Background(lipgloss.Color("#27B6C7")),
+		facePupil:  r.NewStyle().Background(lipgloss.Color("#092B3A")),
+		faceLid:    r.NewStyle().Background(lipgloss.Color("#7D56F4")),
+		faceMouth:  r.NewStyle().Bold(true),
+		faceAccent: faceBlue,
+		faceHappy:  faceGold,
+
+		ghostOutline: r.NewStyle().Bold(true),
+		ghostBody: r.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("#D8D6E0")),
+		ghostColors: []lipgloss.Color{
+			lipgloss.Color("#79A8FF"),
+			lipgloss.Color("#B38CFF"),
+			lipgloss.Color("#FF78B7"),
+			lipgloss.Color("#FF8B65"),
+			lipgloss.Color("#78E0A1"),
+			lipgloss.Color("#64D8E8"),
+		},
 	}
 }

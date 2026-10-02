@@ -1,19 +1,24 @@
 package ui
 
 import (
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
 // Model is the root Bubble Tea model backing the SSHowroom TUI. It follows
-// the Elm architecture by composing two smaller sub-models — the sidebar
-// and the main panel — and coordinating messages between them.
+// the Elm architecture by composing the sidebar, main panel, animated eyes,
+// and spinning ghost panel, and coordinating messages between them.
 type Model struct {
 	topics []Topic
 
-	sidebar sidebarModel
-	main    mainModel
+	sidebar  sidebarModel
+	main     mainModel
+	face     faceModel
+	terminal terminalModel
 
+	splash      bool
 	width       int
 	height      int
 	ready       bool // true once the first tea.WindowSizeMsg has arrived
@@ -33,6 +38,8 @@ func NewModel(r *lipgloss.Renderer) Model {
 		topics:      topics,
 		sidebar:     newSidebar(topics),
 		main:        newMainPanel(),
+		face:        newFace(),
+		splash:      true,
 		footerColor: nextFooterColor(""),
 		styles:      makeStyles(r),
 	}
@@ -43,6 +50,14 @@ func NewModel(r *lipgloss.Renderer) Model {
 // loading data asynchronously) from here.
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+type faceTickMsg time.Time
+
+func nextFaceTick() tea.Cmd {
+	return tea.Tick(100*time.Millisecond, func(t time.Time) tea.Msg {
+		return faceTickMsg(t)
+	})
 }
 
 // Update is the single entry point for all state transitions. It dispatches
@@ -60,28 +75,46 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.ready = true
 		return m, nil
 
-	case tea.KeyMsg:
-		m.footerColor = nextFooterColor(m.footerColor)
+	case faceTickMsg:
+		if m.splash || m.quitting {
+			return m, nil
+		}
+		m.face = m.face.Update(time.Time(msg))
+		m.terminal = m.terminal.Update()
+		return m, nextFaceTick()
 
-		switch msg.String() {
-		case "ctrl+c", "q":
+	case tea.KeyMsg:
+		if msg.String() == "ctrl+c" {
 			m.quitting = true
 			return m, tea.Quit
 		}
+		if m.splash {
+			m.splash = false
+			return m, nextFaceTick()
+		}
 
-		// Sidebar navigation (j/k) — selecting a new topic resets the main
-		// panel's active tab, since tab indices are only meaningful per
-		// topic (e.g. "Contact" has fewer tabs than "Projects").
-		var topicChanged bool
-		m.sidebar, topicChanged = m.sidebar.Update(msg)
-		if topicChanged {
-			m.main = m.main.ResetTab()
+		m.footerColor = nextFooterColor(m.footerColor)
+		m.face = m.face.LookAt(msg.String(), time.Now())
+		if msg.String() == "q" {
+			m.quitting = true
+			return m, tea.Quit
+		}
+		if msg.String() == "tab" || msg.String() == "shift+tab" {
+			delta := 1
+			if msg.String() == "shift+tab" {
+				delta = -1
+			}
+			m.sidebar = m.sidebar.Move(delta)
+			m.main = m.main.ResetSelection()
 			return m, nil
 		}
 
-		// Main panel tab navigation (h/l) — scoped to whichever topic is
-		// currently selected in the sidebar.
-		m.main = m.main.Update(msg, m.sidebar.Selected())
+		cardWidth := 34
+		if m.width >= 115 {
+			cardWidth = max(1, (m.width-int(float64(m.width)*sidebarWidthRatio)-panelGap-6)/2)
+		}
+		columns := max(1, (m.width-int(float64(m.width)*sidebarWidthRatio)-panelGap-4)/cardWidth)
+		m.main = m.main.Update(msg, m.sidebar.Selected(), columns)
 	}
 
 	return m, nil

@@ -21,6 +21,14 @@ func (s sidebarModel) Selected() Topic {
 	return s.topics[s.cursor]
 }
 
+func (s sidebarModel) Move(delta int) sidebarModel {
+	if len(s.topics) == 0 {
+		return s
+	}
+	s.cursor = (s.cursor + delta + len(s.topics)) % len(s.topics)
+	return s
+}
+
 // Update handles sidebar-specific navigation. Movement wraps around (moving
 // past the last topic jumps back to the first, and vice versa) which is a
 // common UX pattern for short vertical lists.
@@ -59,19 +67,15 @@ func (s sidebarModel) Update(msg tea.Msg) (sidebarModel, bool) {
 func (s sidebarModel) View(st styles, width, height int) string {
 	var body string
 	for i, topic := range s.topics {
-		cursor := "  "
-		line := topic.Name
+		line := st.normal.Render(topic.Name)
 		if i == s.cursor {
-			cursor = "❯ "
-			line = st.selected.Render(cursor + line)
-		} else {
-			line = st.normal.Render(cursor + line)
+			line = st.selected.Width(max(0, width-4)).Render(topic.Name)
 		}
 		body += line + "\n"
 	}
 
-	return st.sidebarBox.
+	return st.panel.
 		Width(width).
 		Height(height).
-		Render(st.sidebarTitle.Render("Topics") + "\n\n" + body)
+		Render(st.panelTitle.Render("Topics") + "\n\n" + body)
 }
