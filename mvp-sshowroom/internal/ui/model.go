@@ -14,9 +14,10 @@ type Model struct {
 	sidebar sidebarModel
 	main    mainModel
 
-	width  int
-	height int
-	ready  bool // true once the first tea.WindowSizeMsg has arrived
+	width       int
+	height      int
+	ready       bool // true once the first tea.WindowSizeMsg has arrived
+	footerColor lipgloss.Color
 
 	quitting bool
 	styles   styles
@@ -29,10 +30,11 @@ func NewModel(r *lipgloss.Renderer) Model {
 	topics := mockTopics()
 
 	return Model{
-		topics:  topics,
-		sidebar: newSidebar(topics),
-		main:    newMainPanel(),
-		styles:  makeStyles(r),
+		topics:      topics,
+		sidebar:     newSidebar(topics),
+		main:        newMainPanel(),
+		footerColor: nextFooterColor(""),
+		styles:      makeStyles(r),
 	}
 }
 
@@ -59,6 +61,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tea.KeyMsg:
+		m.footerColor = nextFooterColor(m.footerColor)
+
 		switch msg.String() {
 		case "ctrl+c", "q":
 			m.quitting = true

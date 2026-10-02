@@ -40,7 +40,7 @@ func (m Model) View() string {
 
 	panels := lipgloss.JoinHorizontal(lipgloss.Top, sidebarView, lipgloss.NewStyle().Width(panelGap).Render(""), mainView)
 
-	footer := m.styles.info.Render(" j/k: topics • h/l: tabs • q: quit ")
+	footer := m.styles.info.Foreground(m.footerColor).Render(" j/k: topics • h/l: tabs • q: quit ")
 
 	return panels + "\n" + footer
 }

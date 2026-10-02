@@ -1,6 +1,28 @@
 package ui
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"math/rand"
+
+	"github.com/charmbracelet/lipgloss"
+)
+
+var footerColors = []lipgloss.Color{
+	lipgloss.Color("#FF5F5F"),
+	lipgloss.Color("#FFD75F"),
+	lipgloss.Color("#5FFF87"),
+	lipgloss.Color("#5FD7FF"),
+	lipgloss.Color("#AF87FF"),
+	lipgloss.Color("#FF87D7"),
+	lipgloss.Color("#FFFFFF"),
+}
+
+func nextFooterColor(current lipgloss.Color) lipgloss.Color {
+	next := rand.Intn(len(footerColors))
+	if footerColors[next] == current {
+		next = (next + 1 + rand.Intn(len(footerColors)-1)) % len(footerColors)
+	}
+	return footerColors[next]
+}
 
 // styles holds the session-bound lipgloss styles used to render the TUI.
 // They are built from a *lipgloss.Renderer tied to the client's SSH PTY so
