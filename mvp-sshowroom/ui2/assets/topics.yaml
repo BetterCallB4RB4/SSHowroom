@@ -1,0 +1,38 @@
+# topics.yaml -- the rows shown in the side panel.
+#
+# Every topic has:
+#   id     unique key; also links this topic to its cards/cv entries
+#   title  text shown in the list and as the main-panel title
+#   color  highlight color reused across the whole UI while this topic is active
+#   indent 0 = top-level item, 1 = sub-item (pushed right by two spaces)
+#   layout which main-panel strategy to use ("cards" or "cv")
+topics:
+  - id: about
+    title: About me
+    color: "#FF9F1C" # orange
+    indent: 0
+    layout: cv
+
+  - id: projects
+    title: Projects
+    color: "#FFC300" # yellow
+    indent: 0
+    layout: cards
+
+  - id: music
+    title: Music
+    color: "#FF5F56" # red
+    indent: 0
+    layout: cards
+
+  - id: cv
+    title: CV
+    color: "#4C9AFF" # blue
+    indent: 0
+    layout: cv
+
+  - id: donation
+    title: Donation
+    color: "#9B5DE5" # purple
+    indent: 0
+    layout: cv

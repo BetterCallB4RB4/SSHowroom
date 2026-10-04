@@ -10,7 +10,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"mvp-sshowroom/internal/ui"
+	"mvp-sshowroom/ui2/app"
 )
 
 // New builds a Wish SSH server wired up to serve the SSHowroom TUI, using an
@@ -42,7 +42,7 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 
 	// Make renderer derived specifically from this client's SSH PTY session
 	renderer := wishbubbletea.MakeRenderer(s)
-	m := ui.NewModel(renderer)
+	m := app.New(renderer)
 
 	return m, []tea.ProgramOption{tea.WithAltScreen()}
 }

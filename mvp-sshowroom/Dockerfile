@@ -1,26 +1,36 @@
-# --- Stage 1: Build dell'eseguibile Go ---
+# --- Stage 1: build the Go binary ---
 FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
-# Copia i file dei moduli e scarica le dipendenze
+# Copy the module files first so dependency download is cached separately from
+# the source code.
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copia il codice sorgente e compila il binario
+# Copy the source. ui2/assets/*.yaml must be present here because they are
+# embedded into the binary with //go:embed at compile time.
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o ssh-server main.go
 
-# --- Stage 2: Immagine finale minimale ---
+# Build a static binary. "." builds the root main package (the SSH server);
+# the ui2 dev runner in ./ui2 is a separate package and is not included.
+# -trimpath strips local paths; CGO off keeps the binary portable to Alpine.
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -o ssh-server .
+
+# --- Stage 2: minimal runtime image ---
 FROM alpine:latest
 
 WORKDIR /app
 
-# Copia il binario dallo stage di build
+# Bubble Tea / lipgloss read the terminfo database to match the SSH client's
+# TERM; without it the TUI can render with wrong colors or key handling.
+RUN apk add --no-cache ncurses-terminfo-base
+
+# Copy the binary from the build stage.
 COPY --from=builder /app/ssh-server .
 
-# Espone la porta del server SSH
+# The SSH server listens on this port (see sshserver/config.go).
 EXPOSE 2222
 
-# Avvia l'applicazione Go
+# Start the SSH server.
 CMD ["./ssh-server"]

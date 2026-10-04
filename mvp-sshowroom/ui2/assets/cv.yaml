@@ -1,0 +1,44 @@
+# cv.yaml -- data for topics whose layout is "cv".
+#
+# The top-level keys are topic ids (see topics.yaml). Each entry is one block:
+#   period "2019 - 2022" (rendered muted)
+#   role   job title (rendered bold, in the topic color)
+#   org    company/organization (rendered muted)
+#   detail a one-line description
+about:
+  - period: "2024 - now"
+    role: Independent Go Developer
+    org: Self-employed
+    detail: Building SSH and terminal applications for fun and profit.
+  - period: "Where"
+    role: Based in
+    org: ""
+    detail: Somewhere with good coffee and fast internet.
+
+cv:
+  - period: "2022 - 2024"
+    role: Senior Go Developer
+    org: Acme Corp
+    detail: Led the platform team and built internal TUI tooling.
+  - period: "2019 - 2022"
+    role: Backend Developer
+    org: Globex
+    detail: Designed APIs and distributed services in Go.
+  - period: "2015 - 2019"
+    role: Computer Science, MSc
+    org: University of Example
+    detail: Thesis on terminal user interfaces.
+
+donation:
+  - period: ""
+    role: GitHub Sponsors
+    org: ""
+    detail: github.com/sponsors/example
+  - period: ""
+    role: Ko-fi
+    org: ""
+    detail: ko-fi.com/example
+  - period: ""
+    role: Bitcoin
+    org: ""
+    detail: bc1qexampleaddress000000000000000000

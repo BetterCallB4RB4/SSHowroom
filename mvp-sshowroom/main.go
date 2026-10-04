@@ -11,7 +11,7 @@ import (
 
 	"github.com/charmbracelet/ssh"
 
-	"mvp-sshowroom/internal/sshserver"
+	"mvp-sshowroom/sshserver"
 )
 
 func main() {

@@ -1,0 +1,27 @@
+# cards.yaml -- data for topics whose layout is "cards".
+#
+# The top-level keys are topic ids (see topics.yaml). Each entry is one card:
+#   title       card heading (underlined in the topic color)
+#   description short body text
+#   link        external URL (rendered in the topic color)
+projects:
+  - title: SSHowroom
+    description: A personal portfolio served over SSH with Wish and Bubble Tea.
+    link: https://github.com/example/sshowroom
+  - title: Dotfiles
+    description: Terminal configuration managed with GNU Stow.
+    link: https://github.com/example/dotfiles
+  - title: go-tui-kit
+    description: Small helpers for building Elm-style terminal UIs in Go.
+    link: https://github.com/example/go-tui-kit
+
+music:
+  - title: Synthwave Set
+    description: A live modular synth performance recorded in one take.
+    link: https://soundcloud.com/example/synthwave-set
+  - title: Home Studio
+    description: My little corner for writing and mixing tracks.
+    link: https://example.com/studio
+  - title: Spotify
+    description: Playlists I keep coming back to while coding.
+    link: https://open.spotify.com/user/example
